@@ -254,6 +254,13 @@ EVALUATION INSTRUCTIONS:
         headers: {
           "Content-Type": "application/json"
         }
+        USER PROMPT
+[ Why is the ocean salty? ]
+
+AI RESPONSE
+[ The ocean is salty because whales cried... ]
+
+              [ EVALUATE ]
       }
     );
   }
