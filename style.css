@@ -252,3 +252,29 @@ button:active {
     font-size: 42px;
   }
 }
+
+/* Accessibility helpers */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Visible focus styles for keyboard users */
+button:focus,
+textarea:focus,
+input:focus {
+  outline: 3px solid rgba(99, 102, 241, 0.6);
+  outline-offset: 2px;
+}
+
+/* Slightly reduce logo max width on very small screens */
+@media (max-width: 360px) {
+  .logo { width: min(320px, 95%); }
+}
