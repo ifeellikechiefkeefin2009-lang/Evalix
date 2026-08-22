@@ -10,7 +10,9 @@ export async function onRequest(context) {
 
   if (!prompt || !response) {
     return new Response(
-      JSON.stringify({ error: "Missing required fields: 'prompt' and 'response'." }),
+      JSON.stringify({
+        error: "Missing required fields: 'prompt' and 'response'."
+      }),
       {
         status: 400,
         headers: { "Content-Type": "application/json" }
@@ -64,7 +66,7 @@ export async function onRequest(context) {
 
   const systemInstruction = `You are Evalix, an EXTREMELY RIGOROUS AI evaluation system. Your purpose is to catch false, misleading, and hallucinated content.
 
-YOUR PRIMARY GOAL: Detect and penalize HALLUCINATIONS, FALSE CLAIMS, and LOGICAL FALLACIES.
+YOUR PRIMARY GOAL: Detect and penalize HALLUCINATIONS, FALSE CLAIMS, and LOGICAL FALLACIES. You need to not be nice but if information is wrong give it a LOW score. 
 
 Scoring rules:
 
