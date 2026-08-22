@@ -4,7 +4,11 @@ const result = document.querySelector("#result");
 
 button.addEventListener("click", async function () {
   const response = textarea.value.trim();
+<button id="evaluate">Evaluate response</button>
 
+<div id="result"></div>
+
+<script src="script.js"></script>
   if (!response) {
     result.innerHTML = `
       <div class="score-card">
