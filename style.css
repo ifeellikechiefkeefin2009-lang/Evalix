@@ -1,58 +1,254 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 40px;
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 45px 20px 80px;
+  font-family: "Orbitron", sans-serif;
+  color: white;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0, 140, 255, 0.25), transparent 30%),
+    radial-gradient(circle at 80% 80%, rgba(180, 0, 255, 0.25), transparent 35%),
+    linear-gradient(135deg, #020617, #080b2a 50%, #10051f);
+}
+
+/* LOGO */
+
+.logo {
+  display: block;
+  width: min(420px, 85%);
+  margin: 0 auto 25px;
+  border-radius: 25px;
+
+  box-shadow:
+    0 0 25px rgba(0, 140, 255, 0.25),
+    0 0 60px rgba(150, 0, 255, 0.15);
+}
+
+/* TITLE */
 
 h1 {
   text-align: center;
-  color: #222;
+  font-size: 52px;
+  margin: 10px 0;
+  letter-spacing: 5px;
+
+  background: linear-gradient(
+    90deg,
+    #00d9ff,
+    #6366f1,
+    #d946ef
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 h2 {
-  color: #333;
+  text-align: center;
+  color: #dbeafe;
+  font-size: 18px;
+  letter-spacing: 2px;
 }
 
 p {
-  color: #555;
+  text-align: center;
+  color: #94a3b8;
 }
+
+/* TEXT BOX */
 
 textarea {
   display: block;
-  width: 90%;
-  max-width: 700px;
-  height: 200px;
-  margin: 20px auto;
-  padding: 15px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
+  width: min(850px, 95%);
+  height: 240px;
+  margin: 35px auto 20px;
+  padding: 22px;
+
   resize: vertical;
+
+  background: rgba(5, 10, 30, 0.85);
+  color: white;
+
+  border: 1px solid rgba(99, 102, 241, 0.6);
+  border-radius: 18px;
+
+  font-family: "Orbitron", sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+
+  outline: none;
+
+  box-shadow:
+    0 0 25px rgba(37, 99, 235, 0.12),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+
+  transition: 0.25s;
 }
+
+textarea:focus {
+  border-color: #a855f7;
+
+  box-shadow:
+    0 0 25px rgba(168, 85, 247, 0.3),
+    0 0 60px rgba(37, 99, 235, 0.15);
+}
+
+textarea::placeholder {
+  color: #64748b;
+}
+
+/* BUTTON */
 
 button {
   display: block;
-  margin: 15px auto;
-  padding: 12px 25px;
-  font-size: 16px;
-  font-weight: bold;
+  margin: 20px auto;
+  padding: 15px 35px;
+
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #222;
+  border-radius: 12px;
+
   color: white;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #7c3aed,
+    #d946ef
+  );
+
+  font-family: "Orbitron", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+  cursor: pointer;
+
+  box-shadow:
+    0 0 20px rgba(99, 102, 241, 0.35);
+
+  transition: 0.2s;
 }
 
 button:hover {
-  opacity: 0.8;
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 0 30px rgba(139, 92, 246, 0.6);
 }
 
+button:active {
+  transform: translateY(0);
+}
+
+/* RESULT CONTAINER */
+
 #result {
-  max-width: 700px;
-  margin: 30px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: min(850px, 95%);
+  margin: 35px auto;
+  padding: 28px;
+
+  background: rgba(5, 10, 30, 0.8);
+
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 18px;
+
+  box-shadow:
+    0 0 35px rgba(37, 99, 235, 0.12);
+}
+
+/* SCORE CARD */
+
+.score-card {
+  text-align: center;
+  padding: 10px;
+}
+
+.score-card h2 {
+  margin-top: 0;
+  color: #dbeafe;
+}
+
+.score-number {
+  font-size: 52px;
+  font-weight: 800;
+  margin: 15px;
+
+  background: linear-gradient(
+    90deg,
+    #60a5fa,
+    #c084fc
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* SCORE BAR */
+
+.score-bar {
+  width: 100%;
+  height: 12px;
+
+  background: #1e293b;
+
+  border-radius: 20px;
+  overflow: hidden;
+
+  margin: 20px 0 30px;
+}
+
+.score-fill {
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    #2563eb,
+    #a855f7
+  );
+
+  border-radius: 20px;
+
+  transition: width 0.6s ease;
+}
+
+/* SCORE DETAILS */
+
+.score-card p {
+  color: #cbd5e1;
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  body {
+    padding: 30px 12px 60px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+
+  h2 {
+    font-size: 15px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 200px;
+  }
+
+  #result {
+    width: 100%;
+  }
+
+  .score-number {
+    font-size: 42px;
+  }
 }
