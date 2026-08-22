@@ -16,34 +16,38 @@ exports.handler = async function (event) {
   const text = response.toLowerCase();
 
   let accuracy = 100;
+  let reasoning = 100;
   let clarity = 100;
   let completeness = 100;
 
   let feedback = [];
+  let improvements = [];
 
 
-  // IMPOSSIBLE / FALSE CLAIM DETECTOR
+  // Detect obvious misinformation
 
-  const falseClaims = [
+  const badClaims = [
     "moon is made of cheese",
-    "cats can fly",
     "earth is flat",
+    "cats can fly",
     "sun is cold",
     "water is dry",
-    "humans can breathe underwater without equipment",
-    "gravity does not exist",
-    "the earth is the center of the universe"
+    "gravity does not exist"
   ];
 
 
-  falseClaims.forEach(claim => {
+  badClaims.forEach(claim => {
 
     if (text.includes(claim)) {
 
       accuracy -= 70;
 
       feedback.push(
-        "❌ False or impossible claim detected: " + claim
+        "❌ Possible false information: " + claim
+      );
+
+      improvements.push(
+        "Replace unsupported claims with verified information."
       );
 
     }
@@ -52,56 +56,7 @@ exports.handler = async function (event) {
 
 
 
-  // ABSURD COMBINATION DETECTOR
-
-  const absurdWords = [
-    "magic",
-    "teleport",
-    "unicorn",
-    "dragon",
-    "time travel",
-    "invisible"
-  ];
-
-
-  let absurdCount = 0;
-
-  absurdWords.forEach(word => {
-
-    if (text.includes(word)) {
-      absurdCount++;
-    }
-
-  });
-
-
-  if (absurdCount >= 2) {
-
-    accuracy -= 40;
-
-    feedback.push(
-      "❌ Response contains multiple unrealistic concepts."
-    );
-
-  }
-
-
-
-  // TOO SHORT
-
-  if (response.length < 40) {
-
-    completeness -= 35;
-
-    feedback.push(
-      "⚠️ Answer needs more explanation."
-    );
-
-  }
-
-
-
-  // NO REASONING
+  // Reasoning check
 
   if (
     response.length > 80 &&
@@ -110,29 +65,58 @@ exports.handler = async function (event) {
     !text.includes("therefore")
   ) {
 
-    clarity -= 20;
+    reasoning -= 25;
 
     feedback.push(
-      "💡 Add reasoning or evidence to support the answer."
+      "⚠️ The answer gives information but little reasoning."
+    );
+
+    improvements.push(
+      "Explain why the answer is correct."
     );
 
   }
 
 
 
-  // RANDOM / NONSENSE DETECTOR
+  // Clarity check
 
-  const words = text.split(" ");
-
-  const uniqueWords = new Set(words);
-
-  if (words.length > 10 &&
-      uniqueWords.size / words.length < 0.4) {
+  if (response.length < 40) {
 
     clarity -= 30;
 
     feedback.push(
-      "⚠️ Response may contain repetitive or unclear wording."
+      "⚠️ The answer is too short."
+    );
+
+    improvements.push(
+      "Add more details and examples."
+    );
+
+  }
+
+
+
+  // Completeness check
+
+  if (response.length < 100) {
+
+    completeness -= 20;
+
+    feedback.push(
+      "⚠️ More supporting details would improve this answer."
+    );
+
+  }
+
+
+
+  // Positive feedback
+
+  if (feedback.length === 0) {
+
+    feedback.push(
+      "✅ Answer appears clear and reasonable."
     );
 
   }
@@ -140,25 +124,15 @@ exports.handler = async function (event) {
 
 
   accuracy = Math.max(0, accuracy);
+  reasoning = Math.max(0, reasoning);
   clarity = Math.max(0, clarity);
   completeness = Math.max(0, completeness);
 
 
 
   const overall = Math.round(
-    (accuracy + clarity + completeness) / 3
+    (accuracy + reasoning + clarity + completeness) / 4
   );
-
-
-
-  if (feedback.length === 0) {
-
-    feedback.push(
-      "✅ Response appears reasonable."
-    );
-
-  }
-
 
 
   return {
@@ -168,10 +142,17 @@ exports.handler = async function (event) {
     body: JSON.stringify({
 
       overall,
-      accuracy,
-      clarity,
-      completeness,
-      feedback
+
+      scores: {
+        accuracy,
+        reasoning,
+        clarity,
+        completeness
+      },
+
+      feedback,
+
+      improvements
 
     })
 
