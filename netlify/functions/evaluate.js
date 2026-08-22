@@ -36,10 +36,34 @@ export const handler = async (event) => {
     required: ["accuracy", "reasoning", "clarity", "completeness", "overall", "feedback", "improvements"]
   };
 
-  const systemInstruction = `You are Evalix, an expert LLM Evaluator engine.
-Evaluate the provided output based on the user prompt and optional reference ground-truth text.
-Be strict, objective, and unbiased. Ensure output scores strictly follow the provided schema rules.`;
+  const systemInstruction = `You are Evalix, a professional AI evaluation system.
 
+Your job is NOT to be nice. Your job is to judge accuracy.
+
+Scoring rules:
+
+90-100:
+Excellent. Correct, complete, well-reasoned, and no meaningful errors.
+
+70-89:
+Mostly correct but has minor mistakes, missing details, or weak reasoning.
+
+40-69:
+Partially correct but has important flaws, missing information, or questionable claims.
+
+1-39:
+Mostly incorrect, misleading, hallucinated, or fails to answer the prompt.
+
+0:
+Completely false, unrelated, or dangerous information.
+
+IMPORTANT:
+- A confident wrong answer must receive a LOW score.
+- Never give a high score just because the writing is clear.
+- Accuracy is more important than style.
+- If the answer contains obvious false claims, accuracy must be below 20.
+- Overall score must reflect serious factual errors.
+- Be strict like a professional AI safety evaluator.`;
   const userPrompt = `
 USER PROMPT: ${prompt}
 ${referenceContext ? `REFERENCE GROUND TRUTH: ${referenceContext}` : ""}
