@@ -21,7 +21,7 @@ button.addEventListener("click", async function () {
   `;
 
   try {
-    const request = await fetch("/.netlify/functions/evaluate", {
+    const request = await fetch("/evaluate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
