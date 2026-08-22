@@ -1,84 +1,106 @@
 exports.handler = async function (event) {
-  if (event.httpMethod !== "POST") {
+
+  const data = JSON.parse(event.body || "{}");
+  const response = (data.response || "").trim();
+
+  if (!response) {
     return {
-      statusCode: 405,
+      statusCode: 400,
       body: JSON.stringify({
-        error: "Only POST requests are allowed."
+        error: "No response provided."
       })
     };
   }
 
-  try {
-    const data = JSON.parse(event.body || "{}");
-    const response = (data.response || "").trim();
+  let accuracy = 100;
+  let clarity = 100;
+  let completeness = 100;
 
-    if (!response) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          error: "No response was provided."
-        })
-      };
+  let feedback = [];
+
+  const text = response.toLowerCase();
+
+
+  // Detect obviously fake statements
+  const falseClaims = [
+    "earth is flat",
+    "moon is made of cheese",
+    "cats can fly",
+    "water is dry",
+    "sun is cold"
+  ];
+
+  falseClaims.forEach(claim => {
+    if (text.includes(claim)) {
+      accuracy -= 40;
+      feedback.push(
+        "⚠️ Possible false claim detected: " + claim
+      );
     }
+  });
 
-    const text = response.toLowerCase();
 
-    let accuracy = 100;
-    let clarity = 100;
-    let completeness = 100;
-    const feedback = [];
-
-    // Basic factual-error detection
-    if (
-      text.includes("capital of france") &&
-      text.includes("london")
-    ) {
-      accuracy -= 50;
-      feedback.push("Possible factual error: London is not the capital of France.");
-    }
-
-    // Clarity
-    if (response.length < 20) {
-      clarity -= 30;
-      feedback.push("The response is very short and may need more explanation.");
-    }
-
-    // Completeness
-    if (response.length < 50) {
-      completeness -= 20;
-      feedback.push("The response could use more detail.");
-    }
-
-    // Avoid scores below zero
-    accuracy = Math.max(0, accuracy);
-    clarity = Math.max(0, clarity);
-    completeness = Math.max(0, completeness);
-
-    const overall = Math.round(
-      (accuracy + clarity + completeness) / 3
+  // Detect weak answers
+  if (response.length < 30) {
+    completeness -= 30;
+    feedback.push(
+      "⚠️ Answer is too short. Add more explanation."
     );
-
-    if (feedback.length === 0) {
-      feedback.push("No obvious problems were detected.");
-    }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        overall,
-        accuracy,
-        clarity,
-        completeness,
-        feedback
-      })
-    };
-
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "Evalix could not evaluate the response."
-      })
-    };
   }
+
+
+  // Detect explanation quality
+  if (
+    !text.includes("because") &&
+    !text.includes("since") &&
+    response.length > 60
+  ) {
+    clarity -= 15;
+    feedback.push(
+      "💡 Consider explaining WHY your answer is true."
+    );
+  }
+
+
+  // Detect uncertainty
+  if (
+    text.includes("maybe") ||
+    text.includes("probably") ||
+    text.includes("i think")
+  ) {
+    accuracy -= 10;
+    feedback.push(
+      "⚠️ Response shows uncertainty."
+    );
+  }
+
+
+  accuracy = Math.max(0, accuracy);
+  clarity = Math.max(0, clarity);
+  completeness = Math.max(0, completeness);
+
+
+  const overall = Math.round(
+    (accuracy + clarity + completeness) / 3
+  );
+
+
+  if (feedback.length === 0) {
+    feedback.push(
+      "✅ Response looks strong."
+    );
+  }
+
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      overall,
+      accuracy,
+      clarity,
+      completeness,
+      feedback
+    })
+  };
+
 };
