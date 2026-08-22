@@ -7,77 +7,77 @@ const result = document.querySelector("#result");
 
 if (!button || !textarea || !result) {
   console.error("Missing required DOM elements: #evaluate, #response, or #result");
-}
+} else {
+  button.addEventListener("click", async function () {
+    const responseText = textarea.value.trim();
 
-button.addEventListener("click", async function () {
-  const responseText = textarea.value.trim();
-
-  if (!responseText) {
-    renderMessage("Please enter an AI response first.");
-    return;
-  }
-
-  // Disable button to prevent duplicate requests
-  button.disabled = true;
-  const originalButtonText = button.textContent;
-  button.textContent = "Evaluating...";
-
-  // Show temporary UI
-  renderMessage("Evaluating...");
-
-  try {
-    // Try calling the server endpoint first. If it fails, we'll fall back to a local evaluator.
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-    let data;
-
-    try {
-      const res = await fetch("/evaluate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: "Evaluate this AI response for factual accuracy and truthfulness.",
-          response: responseText,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!res.ok) {
-        // Server returned non-2xx. Attempt to parse useful error info, otherwise fallback.
-        try {
-          const errData = await res.json();
-          console.warn("Server error:", errData);
-        } catch (e) {
-          console.warn("Server returned non-JSON error, status:", res.status);
-        }
-
-        throw new Error("Server evaluation unavailable (status: " + res.status + ")");
-      }
-
-      // Parse JSON safely
-      try {
-        data = await res.json();
-      } catch (e) {
-        throw new Error("Invalid JSON from server");
-      }
-
-    } catch (networkErr) {
-      // Network error, timeout, or server not present — fall back to local evaluator
-      console.warn("Falling back to local evaluator:", networkErr.message);
-      data = localEvaluate(responseText);
+    if (!responseText) {
+      renderMessage("Please enter an AI response first.");
+      return;
     }
 
-    renderResult(data);
-  } catch (err) {
-    renderError(err.message || "Evaluation failed.");
-  } finally {
-    button.disabled = false;
-    button.textContent = originalButtonText;
-  }
-});
+    // Disable button to prevent duplicate requests
+    button.disabled = true;
+    const originalButtonText = button.textContent;
+    button.textContent = "Evaluating...";
+
+    // Show temporary UI
+    renderMessage("Evaluating...");
+
+    try {
+      // Try calling the server endpoint first. If it fails, we'll fall back to a local evaluator.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      let data;
+
+      try {
+        const res = await fetch("/evaluate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: "Evaluate this AI response for factual accuracy and truthfulness.",
+            response: responseText,
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          // Server returned non-2xx. Attempt to parse useful error info, otherwise fallback.
+          try {
+            const errData = await res.json();
+            console.warn("Server error:", errData);
+          } catch (e) {
+            console.warn("Server returned non-JSON error, status:", res.status);
+          }
+
+          throw new Error("Server evaluation unavailable (status: " + res.status + ")");
+        }
+
+        // Parse JSON safely
+        try {
+          data = await res.json();
+        } catch (e) {
+          throw new Error("Invalid JSON from server");
+        }
+
+      } catch (networkErr) {
+        // Network error, timeout, or server not present — fall back to local evaluator
+        console.warn("Falling back to local evaluator:", networkErr.message);
+        data = localEvaluate(responseText);
+      }
+
+      renderResult(data);
+    } catch (err) {
+      renderError(err.message || "Evaluation failed.");
+    } finally {
+      button.disabled = false;
+      button.textContent = originalButtonText;
+    }
+  });
+}
 
 function renderMessage(message) {
   result.innerHTML = "";
