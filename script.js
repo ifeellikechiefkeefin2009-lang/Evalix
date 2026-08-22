@@ -32,11 +32,14 @@ button.addEventListener("click", async function () {
       })
     });
 
-    const data = await request.json();
-
+    // CHECK STATUS FIRST (before parsing JSON)
     if (!request.ok) {
-      throw new Error(data.error || "Evaluation failed.");
+      const errorData = await request.json();
+      throw new Error(errorData.error || "Evaluation failed.");
     }
+
+    // THEN parse JSON
+    const data = await request.json();
 
     result.innerHTML = `
       <div class="score-card">
@@ -61,7 +64,7 @@ button.addEventListener("click", async function () {
         <p>📚 Completeness: ${data.completeness}/100</p>
 
         <p>
-          ${data.feedback.join("<br><br>")}
+          ${Array.isArray(data.feedback) ? data.feedback.join("<br><br>") : "No feedback available"}
         </p>
 
       </div>
