@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+export async function onRequest(context) {
+
 
 export async function onRequest(context) {
   const data = await context.request.json().catch(() => ({}));
