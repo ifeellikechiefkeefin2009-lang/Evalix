@@ -1,9 +1,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 export async function onRequest(context) {
+  const ai = new GoogleGenAI({
+    apiKey: context.env.GEMINI_API_KEY
+  });
 
-
-export async function onRequest(context) {
   const data = await context.request.json().catch(() => ({}));
   const { prompt, response, referenceContext } = data;
 
