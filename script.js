@@ -27,6 +27,7 @@ button.addEventListener("click", async function () {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        prompt: "Evaluate this AI response for factual accuracy and truthfulness.",
         response: response
       })
     });
