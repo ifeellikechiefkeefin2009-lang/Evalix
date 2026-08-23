@@ -66,7 +66,7 @@ if (!button || !textarea || !result) {
       } catch (networkErr) {
         // Network error, timeout, or server not present — fall back to local evaluator
         console.warn("Falling back to local evaluator:", networkErr.message);
-        data = localEvaluate(responseText);
+       throw new Error("LOCAL FALLBACK USED");
       }
 
       renderResult(data);
